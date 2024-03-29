@@ -22,7 +22,7 @@ func CreateAccessToken(userId string) (string, error) {
 	claims := jwtAccessClaims{
 		userId,
 		golangJwt.RegisteredClaims{
-			ExpiresAt: golangJwt.NewNumericDate(time.Now().Add(time.Second * 5)),
+			ExpiresAt: golangJwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
 		},
 	}
 
