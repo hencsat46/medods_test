@@ -30,13 +30,13 @@ func (h *handler) CreateTokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := jwt.CreateAccessToken(requestBody["UserId"])
+	accessToken, refreshToken, err := jwt.CreateTokens(requestBody["UserId"])
 	if err != nil {
 		fmt.Fprint(w, models.Response{Status: 500, Payload: "Create token error"})
 		return
 	}
 
-	fmt.Fprint(w, models.Response{Status: 200, Payload: fmt.Sprintf("Token: %s", token)})
+	fmt.Fprint(w, models.Response{Status: 200, Payload: fmt.Sprintf("Access Token: %v\nRefreshToken: %v", accessToken, refreshToken)})
 
 }
 
