@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"log"
 	"medods_test/internal/usecase"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,10 +38,11 @@ func (r *repository) InsertUser(userId, token string) error {
 // }
 
 func (r *repository) GetToken(userId string) (string, error) {
-	filter := bson.D{{"UserId", userId}}
+	filter := bson.D{{"userid", userId}}
 	result := mongoData{}
 
 	if err := r.mongoConnection.Database("medods_db").Collection("tokens").FindOne(context.TODO(), filter).Decode(&result); err != nil {
+		log.Println(err)
 		return "", err
 	}
 
