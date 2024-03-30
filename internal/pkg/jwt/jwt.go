@@ -1,7 +1,8 @@
 package jwt
 
 import (
-	"crypto/sha512"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -29,7 +30,6 @@ type refreshClaims struct {
 	Secret  string
 	Time    int64
 	ExpTime int64
-	IsUsed  bool
 }
 
 func CreateTokens(userId string) (string, string, error) {
@@ -88,8 +88,43 @@ func ValidationAccessJWT(innerFunc func(w http.ResponseWriter, r *http.Request))
 	})
 }
 
+func ParseAccess(inputToken string) (jwtAccessClaims, error) {
+	token, err := golangJwt.ParseWithClaims(inputToken, &jwtAccessClaims{}, func(t *golangJwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("SECRET")), nil
+	})
+	if err != nil {
+		return jwtAccessClaims{}, err
+	}
+
+	if claims, ok := token.Claims.(*jwtAccessClaims); ok {
+		return *claims, nil
+	} else {
+		return jwtAccessClaims{}, errors.New("cannot parse access token")
+	}
+
+}
+
+func ParseRefresh(inputToken string) (refreshClaims, error) {
+
+	decodedToken, err := base64.StdEncoding.DecodeString(inputToken)
+	if err != nil {
+		log.Println("Cannot decode token", err)
+		return refreshClaims{}, err
+	}
+
+	unmarshaledToken := refreshClaims{}
+
+	if err := json.Unmarshal(decodedToken, &unmarshaledToken); err != nil {
+		log.Println("Cannot unmarshal token", err)
+		return refreshClaims{}, err
+	}
+
+	return unmarshaledToken, nil
+
+}
+
 func createRefreshToken(customTime, expTime int64, userId, salt, secret string) (string, error) {
-	refreshToken := refreshClaims{UserId: userId, Salt: salt, Secret: secret, Time: customTime}
+	refreshToken := refreshClaims{UserId: userId, Salt: salt, Secret: secret, Time: customTime, ExpTime: expTime}
 
 	tokenString, err := json.Marshal(refreshToken)
 	if err != nil {
@@ -97,8 +132,17 @@ func createRefreshToken(customTime, expTime int64, userId, salt, secret string) 
 		return "", err
 	}
 
-	hasher := sha512.New()
-	hasher.Write(tokenString)
+	encodedToken := base64.StdEncoding.EncodeToString(tokenString)
+
+	return encodedToken, nil
+}
+
+func HashRefresh(token string) (string, error) {
+	hasher := sha256.New()
+	if _, err := hasher.Write([]byte(token)); err != nil {
+		log.Println("Cannot hash token", err)
+		return "", err
+	}
 	hash := hasher.Sum(nil)
 
 	return hex.EncodeToString(hash), nil
