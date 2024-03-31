@@ -7,7 +7,7 @@ import (
 )
 
 func Init() {
-	if err := dotenv.Load("../.env"); err != nil {
+	if err := dotenv.Load(".env"); err != nil {
 		log.Fatalln("Cannot find .env file")
 	}
 }

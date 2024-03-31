@@ -27,7 +27,7 @@ func NewHandler(usecase UsecaseInterfaces) *handler {
 func (h *handler) CreateTokens(w http.ResponseWriter, r *http.Request) {
 	var request Request
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil || len(request.UserId) == 0 {
-		response := models.Response{Status: 401, Payload: "JSON error"}
+		response := models.Response{Status: 400, Payload: "JSON error"}
 		h.Response(w, response)
 		return
 	}
@@ -47,7 +47,7 @@ func (h *handler) CreateTokens(w http.ResponseWriter, r *http.Request) {
 			h.Response(w, response)
 			return
 		}
-		response := models.Response{Status: 501, Payload: "Internal Server Error"}
+		response := models.Response{Status: 500, Payload: "Internal Server Error"}
 		h.Response(w, response)
 		return
 	}
@@ -66,7 +66,7 @@ func (h *handler) CreateTokens(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	var request Request
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil || len(request.UserId) == 0 {
-		response := models.Response{Status: 401, Payload: "JSON error"}
+		response := models.Response{Status: 400, Payload: "JSON error"}
 		h.Response(w, response)
 		return
 	}
@@ -89,7 +89,7 @@ func (h *handler) Refresh(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		response := models.Response{Status: 501, Payload: "Internal server error"}
+		response := models.Response{Status: 500, Payload: "Internal server error"}
 		h.Response(w, response)
 		return
 	}

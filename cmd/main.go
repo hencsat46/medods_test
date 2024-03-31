@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"medods_test/internal/handler"
 	"medods_test/internal/pkg/db"
 	"medods_test/internal/pkg/env"
@@ -15,7 +16,7 @@ import (
 func main() {
 
 	server := &http.Server{
-		Addr: ":3000",
+		Addr: "0.0.0.0:3000",
 	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -30,16 +31,12 @@ func main() {
 	http.HandleFunc("POST /refresh", handler.Refresh)
 
 	go func(ctx context.Context) {
-		for {
-			select {
-			case <-ctx.Done():
-				server.Close()
-
-				return
-			}
-		}
+		<-ctx.Done()
+		server.Close()
 	}(ctx)
 
-	server.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalln(err)
+	}
 
 }

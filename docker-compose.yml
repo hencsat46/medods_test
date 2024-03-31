@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+    oauth2:
+        build: ./
+        ports:
+            - 3000:3000
+    
+    medods_db:
+        image: mongodb/mongodb-community-server
+        ports:
+            - 27017:27017
+        volumes:
+            - dbVol:/data/db
+volumes:
+    dbVol:
