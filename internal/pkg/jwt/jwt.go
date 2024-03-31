@@ -40,14 +40,14 @@ func CreateTokens(userId string) (string, string, error) {
 		log.Println("Cannot create salt", err)
 	}
 
-	refreshToken, err := createRefreshToken(tokenTime, time.Now().Add(time.Minute*5).Unix(), userId, salt, os.Getenv("SECRET"))
+	refreshToken, err := createRefreshToken(tokenTime, time.Now().Add(time.Second*5).Unix(), userId, salt, os.Getenv("SECRET"))
 	if err != nil {
 		return "", "", err
 	}
 
 	claims := jwtAccessClaims{
 		userId,
-		time.Now().Unix(),
+		tokenTime,
 		salt,
 		golangJwt.RegisteredClaims{
 			ExpiresAt: golangJwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
