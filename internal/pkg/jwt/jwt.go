@@ -14,6 +14,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	golangJwt "github.com/golang-jwt/jwt/v5"
 )
 
@@ -50,7 +51,7 @@ func CreateTokens(userId string) (string, string, error) {
 		tokenTime,
 		salt,
 		golangJwt.RegisteredClaims{
-			ExpiresAt: golangJwt.NewNumericDate(time.Now().Add(time.Minute * 2)),
+			ExpiresAt: golangJwt.NewNumericDate(time.Now().Add(time.Minute * 3)),
 		},
 	}
 
@@ -93,7 +94,9 @@ func ParseAccess(inputToken string) (jwtAccessClaims, error) {
 		return []byte(os.Getenv("SECRET")), nil
 	})
 	if err != nil {
-		return jwtAccessClaims{}, err
+		if !errors.Is(err, jwt.ErrTokenExpired) {
+			return jwtAccessClaims{}, err
+		}
 	}
 
 	if claims, ok := token.Claims.(*jwtAccessClaims); ok {

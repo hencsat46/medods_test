@@ -70,6 +70,7 @@ func (u *usecase) RefreshUser(userData models.UserToken) (models.UserToken, erro
 
 	accessClaims, err := jwt.ParseAccess(accessToken)
 	if err != nil {
+		log.Println(err)
 		return models.UserToken{}, err
 	}
 
