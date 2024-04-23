@@ -24,6 +24,14 @@ func NewHandler(usecase UsecaseInterfaces) *handler {
 	return &handler{usecase: usecase}
 }
 
+// ShowAccount godoc
+//
+//	@Summary	Create Access and Refresh tokens
+//	@ID			create-tokens
+//	@Accept		json
+//	@Produce	json
+//	@Param		UserId	body	Request	true	"Json with user id"
+//	@Router		/create [post]
 func (h *handler) CreateTokens(w http.ResponseWriter, r *http.Request) {
 	var request Request
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil || len(request.UserId) == 0 {
@@ -63,6 +71,18 @@ func (h *handler) CreateTokens(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// ShowAccount godoc
+//
+//	@Summary	Create Access and Refresh tokens
+//	@ID			refresh-tokens
+//	@Accept		json
+//	@Produce	json
+//	@Param		UserId	body	Request	true	"Json with user id"
+//
+//	@Param		Access	header	string	true	"Access token"
+//
+//	@Param		Refresh	header	string	true	"Refresh token"
+//	@Router		/refresh [post]
 func (h *handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	var request Request
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil || len(request.UserId) == 0 {

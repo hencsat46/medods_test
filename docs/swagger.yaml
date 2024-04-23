@@ -1,0 +1,56 @@
+basePath: /
+definitions:
+  handler.Request:
+    properties:
+      UserId:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  title: Тестовое задание на позицию Junior Backend Developer
+  version: "1.0"
+paths:
+  /create:
+    post:
+      consumes:
+      - application/json
+      operationId: create-tokens
+      parameters:
+      - description: Json with user id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          $ref: '#/definitions/handler.Request'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create Access and Refresh tokens
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      operationId: refresh-tokens
+      parameters:
+      - description: Json with user id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          $ref: '#/definitions/handler.Request'
+      - description: Access token
+        in: header
+        name: Access
+        required: true
+        type: string
+      - description: Refresh token
+        in: header
+        name: Refresh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create Access and Refresh tokens
+swagger: "2.0"

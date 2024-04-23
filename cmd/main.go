@@ -10,7 +10,16 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+
+	_ "medods_test/docs"
+
+	swagger "github.com/swaggo/http-swagger"
 )
+
+//	@title		Тестовое задание на позицию Junior Backend Developer
+//	@version	1.0
+//	@host		localhost:3000
+//	@basepath	/
 
 func main() {
 
@@ -40,6 +49,7 @@ func main() {
 	handler := handler.NewHandler(usecase)
 	http.HandleFunc("POST /create", handler.CreateTokens)
 	http.HandleFunc("POST /refresh", handler.Refresh)
+	http.HandleFunc("GET /swagger/*", swagger.WrapHandler)
 
 	go func(ctx context.Context) {
 		<-ctx.Done()
