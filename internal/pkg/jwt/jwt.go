@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	customErrors "medods_test/internal/errors"
 	"medods_test/internal/models"
 	"net/http"
 	"os"
@@ -94,6 +95,10 @@ func ParseAccess(inputToken string) (jwtAccessClaims, error) {
 		return []byte(os.Getenv("SECRET")), nil
 	})
 	if err != nil {
+		if errors.Is(err, jwt.ErrTokenMalformed) {
+
+			return jwtAccessClaims{}, customErrors.ErrAccessToken
+		}
 		if !errors.Is(err, jwt.ErrTokenExpired) {
 			return jwtAccessClaims{}, err
 		}
@@ -112,7 +117,7 @@ func ParseRefresh(inputToken string) (refreshClaims, error) {
 	decodedToken, err := base64.StdEncoding.DecodeString(inputToken)
 	if err != nil {
 		log.Println("Cannot decode token", err)
-		return refreshClaims{}, err
+		return refreshClaims{}, customErrors.ErrRefreshToken
 	}
 
 	unmarshaledToken := refreshClaims{}

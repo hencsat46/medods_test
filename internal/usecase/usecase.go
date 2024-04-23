@@ -81,8 +81,10 @@ func (u *usecase) RefreshUser(userData models.UserToken) (models.UserToken, erro
 	refreshClaims, err := jwt.ParseRefresh(refreshToken)
 	if err != nil {
 		log.Println("Cannot parse token", err)
+
 		return models.UserToken{}, err
 	}
+
 	refreshId := refreshClaims.UserId
 	refreshTime := refreshClaims.Time
 	refreshSalt := refreshClaims.Salt

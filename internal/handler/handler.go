@@ -89,6 +89,18 @@ func (h *handler) Refresh(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if errors.Is(err, customErrors.ErrRefreshToken) {
+			response := models.Response{Status: 400, Payload: "Invalid refresh token"}
+			h.Response(w, response)
+			return
+		}
+
+		if errors.Is(err, customErrors.ErrAccessToken) {
+			response := models.Response{Status: 400, Payload: "Invalid access token"}
+			h.Response(w, response)
+			return
+		}
+
 		response := models.Response{Status: 500, Payload: "Internal server error"}
 		h.Response(w, response)
 		return
