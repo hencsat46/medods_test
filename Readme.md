@@ -1,5 +1,6 @@
 # Тестовое задание Junior Golang Developer
 ---
+## Для удобного взаимодействия добавлен swagger по адресу localhost:3000/swagger/
 ## Access token. Тип - JWT
 ## Refresh token. Тип - произвольный
 ___
